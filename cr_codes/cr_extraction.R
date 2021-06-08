@@ -210,10 +210,12 @@ View.duplicates <-
 nrow(news) # 3300
 news <- 
     news %>% 
-    filter(title_duplicates != T)
+    filter(title_duplicates != T) %>% 
+    select(-title_duplicates)
+
 nrow(news) # 3248 (3300 - 52 = 3248)
 
 ## save as Rdata file ====
 getwd()
 save(news, file = "cr_data/news.RData") 
-load(file = "cr_data/news.RData")
+#load(file = "cr_data/news.RData")
