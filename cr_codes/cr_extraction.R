@@ -246,7 +246,7 @@ news <-
 # FINAL SECTION) save as Rdata file #####
 getwd()
 save(news, file = "cr_data/news.RData") 
-load(file = "cr_data/news.RData")
+#load(file = "cr_data/news.RData")
 
 
 
