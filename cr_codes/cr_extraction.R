@@ -4,7 +4,7 @@
 ## Aim of do-file
 ### Section A) Create file names 
 ### Section B) Extract data 
-### Section C) Create dataset for analysis in another do-file 
+### Section C) REMOVE ARTICLES THAT ARE DUPLICATES, OR NON-RELEVANT
 
 rm(list = ls())
 
@@ -22,7 +22,7 @@ library(stringr)
 library(dplyr)
 library(janitor)
 
-# SECTION A: CREAT FILES NAMES #### 
+# SECTION A: CREATE FILES NAMES #### 
 getwd()
 # First, let's create a list of the files, which is the same first step we've seen before. However, here we can just use your computer's file structures and R commands to do so. 
 
@@ -182,8 +182,6 @@ for(i in 1:length(file.list2)) {
     news$text[i] = paste(temp.doc[start.text:end.text], collapse = "\n")
 }
 
-# SECTION C) Create dataset for analysis in another do-file ####
-
 ## Add in the vars that denote folder number ====
 news$foldernum <- foldernum
 dplyr::glimpse(news)
@@ -193,9 +191,10 @@ news <- news %>%
 
 nrow(news) # 3300
 
-## check for duplicates in titles and/or body ==== 
+# SECTION C) REMOVE ARTICLES THAT ARE DUPLICATES, OR NON-RELEVANT ####
+# Non-relevant articles include those about PAS political party and People Association due to search string "pa" 
 
-### Check for duplicates in titles
+## Check for duplicates in titles ====
 news$title_duplicates <- duplicated(news$title)
 tabyl(news$title_duplicates)
 
@@ -204,9 +203,9 @@ View.duplicates <-
     select(title, text, pub.date, title_duplicates) %>% 
     filter(title_duplicates == T)
     
-### View(View.duplicates) # these obs are duplicates but will not include the original ones
+### View(View.duplicates) # these obs are duplicates but will not include the original ones ====
 
-### remove duplicates (n=52)
+### remove duplicates (n=52) ==== 
 nrow(news) # 3300
 news <- 
     news %>% 
@@ -215,7 +214,39 @@ news <-
 
 nrow(news) # 3248 (3300 - 52 = 3248)
 
-## save as Rdata file ====
+
+## Remove articles related to PA People's Associations and PAS (Political party) ==== 
+
+str_view_all(news$title, regex(pattern = "\\bpas\\b", ignore_case = T))
+#\\b states the start and end of the word boundary 
+str_view_all(news$title, regex(pattern = "\\bpa\\b", ignore_case = T), match = T)
+
+sum(str_detect(news$title, regex(pattern = "\\bpas\\b", ignore_case = T))) # count of 833
+sum(str_detect(news$title, regex(pattern = "\\bpa\\b", ignore_case = T))) # count of 330
+
+news <- 
+    news %>% 
+    mutate(pas = str_detect(title,
+                            regex(pattern = "\\bpas\\b", ignore_case = T))) %>% 
+    mutate(pa = str_detect(title,
+                           regex(pattern = "\\bpa\\b", ignore_case = T)))
+tabyl(news$pas) # 833
+tabyl(news$pa) # 330
+
+news <- 
+    news %>% 
+    filter(pas != T & pa != T)
+
+nrow(news) # 2085 because 3248 - 833 - 330
+
+news <-
+    news %>% 
+    select(-pa, -pas)
+
+# FINAL SECTION) save as Rdata file #####
 getwd()
 save(news, file = "cr_data/news.RData") 
-#load(file = "cr_data/news.RData")
+load(file = "cr_data/news.RData")
+
+
+
