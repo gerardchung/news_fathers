@@ -3,8 +3,7 @@
 
 ## Aim of do-file
 ### Section A) Clean vars
-### Section B) Extract data 
-### Section C) Create dataset for analysis in another do-file 
+### Section B) Save dataset for analysis in another do-file 
 
 rm(list=ls())
 
