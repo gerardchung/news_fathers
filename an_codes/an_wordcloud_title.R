@@ -39,19 +39,31 @@ news_tok <-
 #    tokens_wordstem() 
     
 #news_tok <- tokens_tolower(news_tok)
+#mystopwords <- c("father", "fathers", 
+#                 "dad", "dads", "daddy", "daddies", 
+#                 "man", "paternal", 
+#                 "singapore", "s", "s'pore"
+#                # "says",
+#                # "two",
+#                # "get",
+#                # "one",
+#                # "find",
+#                # "found",
+#                # "day"
+#                 )
+            # why "says", "s" etc? These came from the wordcloud in the following
+            # and I exclude them since they are not useful to the meaning 
+
 mystopwords <- c("father", "fathers", 
                  "dad", "dads", "daddy", "daddies", 
                  "man", "paternal", 
-                 "singapore", "s", "s'pore",
-                 "says")
-            # why "says", "s" etc? These came from the wordcloud in the following
-            # and I exclude them since they are not useful to the meaning 
+                 "singapore", "s", "s'pore", "says", "two", "get", "one", "find", "found", "day")
 
 news_dfm <- 
     dfm(news_tok,
                 tolower = T) %>% 
     dfm_remove(
-               c(phrase(mystopwords), stopwords())) %>% 
+               c(phrase(mystopwords), stopwords("en"))) %>% 
     dfm_wordstem() 
     # impt that word stemming comes after stop word removal. 
   
@@ -75,6 +87,7 @@ textplot_wordcloud(news_dfm, color = c("#459DE0", "#F53446"), max_words = 100,
 
 str_view(news2$title, pattern = "says")
 str_view(news2$title, pattern = "\\bson\\b", match = T)
+str_view(news2$title, pattern = "\\blike\\b", match = T)
 
 
 # Section C) Frequency of word occurrences ####
@@ -90,7 +103,7 @@ library("quanteda.textstats")
 library("RColorBrewer")
 brewer.pal(3,"Set1")
 red = "#E41A1C"
-  blue = "#377EB8"
+blue = "#377EB8"
 green = "#4DAF4A"
 
 ## Create DF for textstat_freq ==== 
@@ -100,7 +113,7 @@ features_plot$feature <- with(features_plot, reorder(feature, docfreq))
     # freq = how many times the word appear (can be once or more in a doc)
 
 ## Plot the textstat_freq  ==== 
-ggplot(features_plot, aes(x = feature, y = docfreq)) +
+ggplot(features_plot, aes(x = feature, y = (docfreq))) +
     geom_segment( aes(xend=feature, yend=0)) +
     geom_point(color = blue, size = 3) + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -148,16 +161,17 @@ ggplot(features_plot, aes(x = feature, y = docfreq)) +
                              family = "Roboto Condensed",
                              size = 3,
                              nudge_x = -.4,nudge_y = 5.2, box.padding = 0.01, segment.curvature = 0.08,
-                            direction = "y")  -> freqplot
+                            direction = "y") -> freqplot
   
-
-
-
 
 ## See samples of titles for the top words ==== 
 str_view(news2$title, pattern = "\\bson\\b", match = T)
 son_text <- news2
 son_text$son <- str_detect(son_text$title, regex(pattern = "\\bson\\b", ignore_case = T))
+
+dg_text <- news2
+dg_text$daughter <- str_detect(dg_text$title, regex(pattern = "\\bdaughter\\b", ignore_case = T))
+
 son_text <-
   son_text %>% 
   filter(son == T) %>% 
@@ -165,6 +179,14 @@ son_text <-
 
 head(son_text$title, n = 10) 
 print(son_text$title) 
+
+dg_text <-
+  dg_text %>% 
+  filter(daughter == T) %>% 
+  select(id, date, source, title, text, daughter )
+
+head(dg_text$title, n = 10) 
+print(dg_text$title) 
 
 ## Sample text 1 
 son_text[son_text$title=="Commando son part of Best Combat Unit - just like his  dad",]
@@ -213,15 +235,39 @@ freqplot +
 
  
 # Feature-occurrence matrix ######
-#https://quanteda.io/articles/pkgdown/examples/twitter.html
+# https://quanteda.io/articles/pkgdown/examples/twitter.html
+# https://tutorials.quanteda.io/basic-operations/fcm/fcm/
+
+# trim down the dfm to those features less than n occurrences
+news_dfm_reduced <- dfm_trim(news_dfm, min_termfreq = 50)
+topfeatures(news_dfm_reduced) # top features
+nfeat(news_dfm_reduced) # number of features 
+
 
 library("quanteda.textplots")
-news_fcm <- fcm(news_dfm)
+news_fcm <- fcm(news_dfm_reduced)
+dim(news_fcm)
 head(news_fcm)
-toptag <- names(topfeatures(news_dfm, 20))
-head(toptag, n = 10)
+nfeat(news_fcm)
 
+toptag <- names(topfeatures(news_fcm, 20))
+head(toptag, n = 10)
+size <- log(colSums(dfm_select(news_dfm_reduced, toptag, selection = "keep")))
 top_fcm <- fcm_select(news_fcm, pattern = toptag)
+
+set.seed(100)
+textplot_network(top_fcm, min_freq = 0.8, vertex_size = size / max(size) * 3, edge_color = "orange", edge_alpha = 5, edge_size = 2)
+
+str_view(news2$title, pattern = "\\btwo\\b", match = T) # two is not a useful word to keep
+str_view(news2$title, pattern = "\\bget\\b", match = T) # get is not a useful word to keep
+str_view(news2$title, pattern = "\\bnew\\b", match = T) # new is USEFUL: new fathers
+str_view(news2$title, pattern = "\\bfind\\b", match = T) # find is not a useful word to keep
+str_view(news2$title, pattern = "\\bwant\\b", match = T) # want is not a useful word to keep
+str_view(news2$title, pattern = "\\btime\\b", match = T) # time is USEFUL:
+str_view(news2$title, pattern = "\\bone\\b", match = T) # one is not a useful word to keep
+str_view(news2$title, pattern = "\\bday\\b", match = T) # day is not a useful word to keep
+
+
 
 textplot_network(top_fcm, min_freq = 1, edge_alpha = 0.5, edge_size = 5)
 textplot_network(top_fcm, min_freq = 0.01, edge_color = "orange", edge_alpha = 0.8, edge_size = 1)
