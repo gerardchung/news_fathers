@@ -188,3 +188,4 @@ news2 <-
 getwd()
 save(news2, file = "cr_data/news2.RData") 
 
+
