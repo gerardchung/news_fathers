@@ -6,7 +6,7 @@ output:
   pdf_document: default
   html_document: default
 ---
-# Text-mining news on Social Work Profession in Singapore :singapore:
+# Text-analysis of news about fathers in Singapore :singapore:
 
 **README WORK IN PROGRESS**
 
