@@ -17,6 +17,16 @@ library(ggrepel)
 
 load(file = "cr_data/news2.RData")
 
+# Generate indicator for fathers #####
+  # will merge in this with the mum set for plotting of trends
+  # "cr_data/news2_mum.RData"
+
+news2 <-
+  news2 %>% 
+  mutate(mum = replicate(nrow(news2),1)) %>% 
+  relocate(mum, .after=id)
+
+
 # Plot number by year ####
 num_by_yr <- 
     news2 %>%
@@ -25,6 +35,23 @@ num_by_yr <-
     summarize(num_yr = n()) %>% 
     ungroup()
 
+num_by_yr_dad <- 
+  news2 %>%
+  filter(source == "ST" & year != 2021) %>% 
+  group_by(year) %>% 
+  summarize(num_yr = n()) %>% 
+  ungroup()
+
+
+# Save this to merge into mum set for plotting #####
+  # This will be done in another dofile
+  # file = "an_data/num_by_yr_mum.RData")
+
+save(num_by_yr_dad, file = "an_data/num_by_yr_dad.RData")
+rm(num_by_yr_dad)
+
+
+# Plotting #####
 p <- ggplot(data = num_by_yr, mapping = aes(x = year, y = num_yr )) 
 p + geom_line(color= "#2a474b" , size = 1) +   #"steelblue"
     labs(title = "Number of Articles",
@@ -81,9 +108,9 @@ p + geom_point(alpha = .6, size =1.5) +
         rect = element_rect(fill = "#F5F5F5"),
         panel.background = element_rect(fill = "#F5F5F5", color = "#F5F5F5"),
         plot.background = element_rect(fill = "#F5F5F5", color = "#F5F5F5"),
-        plot.title = ggtext::element_markdown(size = 15),
+        plot.title = ggtext::element_markdown(size = 15, face="bold"),
         plot.title.position = "plot",
-        plot.subtitle = element_markdown(family = "sans", size = 10, lineheight = 1.2),
+        plot.subtitle = element_markdown(family = "Roboto Condensed", size = 13, lineheight = 1.2),
         panel.grid.minor=element_blank(),
         panel.grid.major=element_blank(),
         strip.text = element_markdown(size = 12, face = "bold"),

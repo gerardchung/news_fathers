@@ -132,7 +132,7 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
         plot.background = element_rect(fill = "#F5F5F5", color = "#F5F5F5"),
         plot.title = ggtext::element_markdown(size = 16),
         plot.title.position = "plot",
-        plot.subtitle = element_markdown(family = "Roboto Condensed", size = 14, lineheight = 1.2),
+        plot.subtitle = element_markdown(family = "Roboto", size = 14, lineheight = 1.2),
         panel.grid.minor=element_blank(),
         panel.grid.major=element_blank(),
         strip.text = element_markdown(size = 12, face = "bold"),
@@ -147,10 +147,11 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
                              aes(label =  docfreq),  # paste0(Importance)
                              hjust = "left",
                              fontface = "plain",
-                             family = "Roboto Condensed",
+                             family = "Roboto",
                              size = 3,
                               nudge_x = -0.5, 
                              box.padding = 0.01,
+                             fill = "#F5F5F5",
                              direction = "y",
                              
                             ) +
@@ -158,9 +159,10 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
                              aes(label =  docfreq),  # paste0(Importance)
                              hjust = "left", 
                              fontface = "plain",
-                             family = "Roboto Condensed",
+                             family = "Roboto",
                              size = 3,
                              nudge_x = -.4,nudge_y = 5.2, box.padding = 0.01, segment.curvature = 0.08,
+                             fill = "#F5F5F5",
                             direction = "y") -> freqplot
   
 
@@ -204,29 +206,35 @@ son_text[son_text$title=="Father  and son are like friends; Actor-host and singl
 
 
 freqplot + 
-  annotate("text", x=18, y=250, 
-           label= "'Commando son part of Best Combat Unit - just like his dad' 
+  scale_y_continuous(expand = c(0,2)) + # make words nearer to start of lines
+  annotate("text", x=18, y=210, 
+           label= "'Commando son part of Best 
+           Combat Unit - just like his dad' 
            - Straits Times, 2005-11-26",
            size = 3.5,
            family = "Roboto Condensed") +
-  annotate("text", x=15, y=230, 
+  annotate("text", x=15, y=210, 
            label= "'Like father, like son, like grandsons' 
            - ST, 2006-01-15",
            size = 3.5,
            family = "Roboto Condensed")  +
-  annotate("text", x=12, y=230, 
-           label= "'Father v son: Dad, 96, wants entire compensation given to son, 70, for Hock Kee unit' 
+  annotate("text", x=12, y=210, 
+           label= "'Father v son: Dad, 96, wants entire 
+           compensation given to son, 70, for Hock Kee unit' 
            - TodayOnline, 2017-06-09",
            size = 3.5,
            family = "Roboto Condensed") + 
-  annotate("text", x=9, y=230, 
-           label= "'Father and son among 109 drug offenders arrested in islandwide raids' 
+  annotate("text", x=8, y=200, 
+           label= "'Father and son among 109 drug offenders 
+           arrested in islandwide raids' 
            - Channel News Asia, 2019-07-12",
            size = 3.5,
            family = "Roboto Condensed") + 
-  annotate("text", x=6, y=230, 
-           label= "'Father and son are like friends; Actor-host and single dad Jeff Wang says 
-           he spends most of his free time with his 13-year-old son' 
+  annotate("text", x=4, y=200, 
+           label= "'Father and son are like friends; 
+           Actor-host and single dad Jeff Wang says 
+           he spends most of his free time 
+           with his 13-year-old son' 
            - ST, 2021-05-31",
            size = 3.5,
            family = "Roboto Condensed")
@@ -271,3 +279,4 @@ str_view(news2$title, pattern = "\\bday\\b", match = T) # day is not a useful wo
 
 textplot_network(top_fcm, min_freq = 1, edge_alpha = 0.5, edge_size = 5)
 textplot_network(top_fcm, min_freq = 0.01, edge_color = "orange", edge_alpha = 0.8, edge_size = 1)
+
