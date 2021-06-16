@@ -39,7 +39,7 @@ A total of 3300 articles were downloaded in html format.
  
  (7) Geographical region: Singapore
  
-**Results of search**: 3300 articles spanning year 1989-2021
+**Results of search**: 3300 articles spanning year 1992-2021
 
 ***Note: Lexis University's policies do not allow me to share the data***
 
