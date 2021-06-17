@@ -119,11 +119,11 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     coord_flip() + 
     
-    labs(title = "Number of articles where the word appeared",
-         subtitle = "Top 20 words",
+    labs(title = "In news about fathers in Singapore, what are the top **co-occurring** words?",
+         subtitle = "Top 20 words from 1992 to 2021",
          x = "Word",
          y = "Number of articles",
-         caption = "@GerardChung | gerardchung.com | Codes: https://github.com/gerardchung/news_fathers") +
+         caption = "Plot by **Gerard Chung** | gerardchung.com | Codes at **github.com/gerardchung/news_fathers**<br>Note: **'news'** include Straits Times, CNA, & TodayOnline") +
     
     theme_classic(base_family = "Roboto Condensed") + 
     theme(
@@ -132,7 +132,7 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
         plot.background = element_rect(fill = "#F5F5F5", color = "#F5F5F5"),
         plot.title = ggtext::element_markdown(size = 16),
         plot.title.position = "plot",
-        plot.subtitle = element_markdown(family = "Roboto", size = 14, lineheight = 1.2),
+        plot.subtitle = element_markdown( size = 14, lineheight = 1.2),
         panel.grid.minor=element_blank(),
         panel.grid.major=element_blank(),
         strip.text = element_markdown(size = 12, face = "bold"),
@@ -141,7 +141,8 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
         axis.text.x = element_text(size = 12, color = "gray20"),
         axis.line.y = element_blank(),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(size = 12, color = "gray20")) +
+        axis.text.y = element_text(size = 12, color = "gray20"),
+        plot.caption = element_markdown(hjust = 0, lineheight = 1.5 )) +
     
     ggrepel::geom_label_repel(data = features_plot %>% filter(feature == "son"), 
                              aes(label =  docfreq),  # paste0(Importance)
@@ -149,7 +150,7 @@ ggplot(features_plot, aes(x = feature, y = (docfreq))) +
                              fontface = "plain",
                              family = "Roboto",
                              size = 3,
-                              nudge_x = -0.5, 
+                              nudge_x = -0.7, 
                              box.padding = 0.01,
                              fill = "#F5F5F5",
                              direction = "y",
@@ -237,9 +238,10 @@ freqplot +
            with his 13-year-old son' 
            - ST, 2021-05-31",
            size = 3.5,
-           family = "Roboto Condensed")
+           family = "Roboto Condensed") -> plot_final
   # https://viz-ggplot2.rsquaredacademy.com/ggplot2-text-annotations.html
 
+ggsave("plots/2_topoccurringwords.png", plot = plot_final, type = 'cairo', width = 9, height = 6.5, dpi = 300, units = "in", bg = "#F5F5F5")
 
  
 # Feature-occurrence matrix ######

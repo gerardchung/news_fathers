@@ -188,13 +188,19 @@ textplot_network(top_fcm, min_freq = 1,  edge_color = blue, edge_alpha = .5, edg
                  vertex_labelsize = 7,
                  vertex_labelfont = "Roboto Condensed",
                  vertex_size = 2) +
-    labs(title = "Nouns that highly co-occurred with 'father'",
+    labs(title = "Nouns that highly co-occurred with 'father' in news about fathers in Singapore",
+         subtitle = "News from Straits Times, CNA, & TodayOnline from 1992 to 2021",
          caption = c("@GerardChung | gerardchung.com | Codes: https://github.com/gerardchung/news_fathers", 
                      "Note: father-related phrases include dad*, father*, paternal")) +
     theme(
         plot.caption = element_text(hjust=c(1, 0.01), vjust=c(1.0, 1.1)),
-        plot.title = element_text(family = "Roboto Condensed", size = 14, hjust = 0.05, vjust = 0.05),
-        )
+        plot.title = element_text(family = "Roboto Condensed", face="bold" , size = 16, hjust = 0.05, vjust = 0.05),
+        plot.subtitle = element_markdown( size = 14, lineheight = 1.2, hjust = 0.04, vjust = 0.05)
+        ) -> plot_final
+
+
+ggsave("plots/2_nounwords.png", plot = plot_final, type = 'cairo', width = 9, height = 6.5, dpi = 300, units = "in", bg = "#F5F5F5")
+
 
 #set.seed(100)
 #options(ggrepel.max.overlaps = Inf)
