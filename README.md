@@ -72,5 +72,5 @@ __Final Sample Size__: 2085
 - [x] Training model
 - [x] Cleaning data
 - [x] Descriptives
-- [x ] Analysis 
+- [x] Analysis 
 
