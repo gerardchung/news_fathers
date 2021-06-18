@@ -151,7 +151,7 @@ p + geom_point(alpha = .6, size =1.5) +
                            direction = "y") -> plot_final
   ggsave("plots/1_trends_3sources.png", plot = plot_final, type = 'cairo', width = 8, height = 6.5, dpi = 300, units = "in", bg = "#F5F5F5")
 
-ggsave(filename = "plots/1_trends_3sources.png", width = 60, height = 40, units = "cm")
+#ggsave(filename = "plots/1_trends_3sources.png", width = 60, height = 40, units = "cm")
 
 
 # Colors from Set1 used in this graph
