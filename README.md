@@ -59,9 +59,11 @@ Codes for data preparations are in **cr_extraction.R** & **cr_prepdata.R**
 
 __Final Sample Size__: 2085
 
-## Data-Preprocessing
-WIP
-
+## Data-analysis
+- Descriptive statistics were done using mostly functions in Quanteda
+- POS tagging were done using spacyr function in R
+- Topic modeling using KeyATM semi-supervised method with key words and covariate model
+- All analyses in R package
 
 ## Task List ##
 **Task List**
@@ -70,5 +72,5 @@ WIP
 - [x] Training model
 - [x] Cleaning data
 - [x] Descriptives
-- [ ] Analysis 
+- [x ] Analysis 
 
