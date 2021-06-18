@@ -185,7 +185,7 @@ tdfif_combine <-
     mutate(diff = dad-mum) %>% 
     pivot_longer(cols = c(dad,mum)) %>% 
     rename(Gender = name,
-           Enrollments = value)
+           tfidf = value)
 
 ## Select non-missing  ======
 tdfif_combine <-
@@ -209,8 +209,8 @@ dat_gender <- tdfif_combine
 
 dat_gender %>%
     group_by(Gender) %>%
-    summarise(mean = mean(Enrollments),
-              SE = sd(Enrollments)) %>%
+    summarise(mean = mean(tfidf),
+              SE = sd(tfidf)) %>%
     mutate(meanpos = mean + 1 *SE,
            meanneg = mean - 1 *SE)-> stats
 
@@ -229,7 +229,7 @@ Females <- dat_gender %>%
 
 diff <- dat_gender %>%
     filter(Gender == "dad") %>%
-    mutate(x_pos = Enrollments + (abs(diff)/2))
+    mutate(x_pos = tfidf + (abs(diff)/2))
 
 green = "#009688"
 purple = "#762a83"
@@ -244,11 +244,11 @@ green = "#4DAF4A"
 library(ggtext)
 library(extrafont)
 
-ggplot(dat_gender, aes(x = Enrollments, y = reorder(factor(features),Enrollments))) +
+ggplot(dat_gender, aes(x = tfidf, y = reorder(factor(features),tfidf))) +
     
-    geom_segment(data = Males, aes(x = Enrollments, y = features, yend = Females$features,  xend = Females$Enrollments),
+    geom_segment(data = Males, aes(x = tfidf, y = features, yend = Females$features,  xend = Females$tfidf),
                  color = "#aeb6bf", size = 4.5, alpha = .5) +
-    geom_point( aes(color = Gender), size = 4.5, show.legend = FALSE) +
+    geom_point( aes(color = Gender), size = 6, show.legend = FALSE) +
     scale_color_manual(values = c(blue,darkred)) +
     
     geom_text(data = diff %>% filter(features != "son" & features != "death"), 
@@ -268,9 +268,9 @@ ggplot(dat_gender, aes(x = Enrollments, y = reorder(factor(features),Enrollments
     facet_grid(features ~ ., scales = "free", switch = "y") + # the words on yaxis comes from here; the axis.text.y turns it off
     xlab("Keyness") + ylab("Word") +
     
-    ggtitle("Key words in fathers' related articles")+
-    labs(subtitle = "Top key words for <span style = 'color: #377EB8;'>**Father**</span> articles compared to <span style = 'color: #96000f;'>**Mother**</span><br>",
-         caption = "Plot by **Gerard Chung** | gerardchung.com | Codes at **github.com/gerardchung/news_fathers**<br>Note: **Keyness** is measured using term-freq inverse doc-freq metric") +
+    ggtitle("Key words in news about fathers in Singapore")+
+    labs(subtitle = "Comparing key words in news about <span style = 'color: #377EB8;'>**Fathers**</span> with <span style = 'color: #96000f;'>**Mothers**</span><br>",
+         caption = "Plot by **Gerard Chung** | gerardchung.com | Codes at github.com/gerardchung/news_fathers<br>Note: **Keyness** is measured using term-freq inverse doc-freq metric<br>**News** from 1992-2021 from Straits Times, CNA, and TodayOnline") +
 
 
     theme_minimal()+
@@ -291,8 +291,12 @@ ggplot(dat_gender, aes(x = Enrollments, y = reorder(factor(features),Enrollments
           panel.spacing = unit(0, "lines"),
           plot.margin = margin(1,1,.5,1, "cm"),
           plot.caption = element_markdown(hjust = 0, lineheight = 1.5, ),
-          plot.subtitle = element_markdown(size = 14, hjust = -.23),
-          plot.title = element_text(size = 16, hjust = -.17, face = "bold")) 
+          plot.subtitle = element_markdown(size = 14),
+          plot.title = element_text(size = 17, face = "bold")) -> plot_final
+  
+  
+  ggsave("plots/2_tfidf_comparemumdad.png", plot = plot_final, type = 'cairo', width = 9, height = 6.5, dpi = 300, units = "in", bg = "#F5F5F5")
+
 
   
 
